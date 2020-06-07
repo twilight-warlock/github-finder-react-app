@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Navbar from "./components/layout/Navbar";
 import Users from "./components/users/Users";
 import Search from "./components/users/Search";
+import Alert from "./components/layout/Alert";
 import "./App.css";
 import axios from "axios";
 
@@ -12,6 +13,7 @@ class App extends Component {
   state = {
     users: [],
     loading: false,
+    alert: null,
   };
 
   // Showing some temporary users
@@ -41,17 +43,30 @@ class App extends Component {
   // Clearing the existing users
   clearUsers = () => this.setState({ users: [], loading: false });
 
+  // Alerting the user if searched without passing any value
+  setAlert = (message, type) => {
+    this.setState({ alert: { message, type } });
+
+    setTimeout(() => {
+      this.setState({ alert: null });
+    }, 5000);
+  };
+
   render() {
+    const { loading, users, alert } = this.state;
+
     return (
       <div className="App">
         <Navbar />
         <div className="container">
+          <Alert alert={alert} />
           <Search
             searchUsers={this.searchUsers}
             clearUsers={this.clearUsers}
-            showClear={this.state.users.length > 0 ? true : false}
+            showClear={users.length > 0 ? true : false}
+            setAlert={this.setAlert}
           />
-          <Users loading={this.state.loading} users={this.state.users} />
+          <Users loading={loading} users={users} />
         </div>
       </div>
     );
